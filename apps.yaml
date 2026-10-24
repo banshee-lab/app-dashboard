@@ -1,0 +1,6 @@
+- name: "Ejemplo 1"
+  url: "https://ejemplo.com/pagina-1"
+  image-url: "https://ejemplo.com/imagenes/imagen1.jpg"
+- name: "Ejemplo 2"
+  url: "https://ejemplo.com/pagina-2"
+  image-url: "https://ejemplo.com/imagenes/imagen2.jpg"

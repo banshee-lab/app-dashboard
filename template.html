@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f8fafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131314" media="(prefers-color-scheme: dark)">
+<title>{{.Title}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<style>
+/* Material 3 tokens (Google blue baseline) */
+:root{
+  --md-surface:#f8fafd; --md-container:#eaf1fb; --md-container-high:#dde3ea;
+  --md-on-surface:#1f1f1f; --md-on-surface-variant:#444746; --md-outline-variant:#c4c7c5;
+  --md-primary:#0b57d0; --md-on-primary:#fff; --md-scrim:rgba(0,0,0,.56);
+  --md-e1:0 1px 2px rgba(0,0,0,.30),0 1px 3px 1px rgba(0,0,0,.15);
+  --md-e3:0 1px 3px rgba(0,0,0,.30),0 4px 8px 3px rgba(0,0,0,.15);
+  --ease:cubic-bezier(.2,0,0,1);
+}
+@media (prefers-color-scheme:dark){:root{
+  --md-surface:#131314; --md-container:#1e1f20; --md-container-high:#282a2c;
+  --md-on-surface:#e3e3e3; --md-on-surface-variant:#c4c7c5; --md-outline-variant:#444746;
+  --md-primary:#a8c7fa; --md-on-primary:#062e6f; --md-scrim:rgba(0,0,0,.62);
+}}
+*{box-sizing:border-box;margin:0}
+html{background:var(--md-surface)}
+body{
+  min-height:100vh;background:var(--md-surface);color:var(--md-on-surface);
+  font:400 1rem/1.5 Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Top app bar */
+.appbar{
+  position:sticky;top:0;z-index:5;background:var(--md-surface);
+  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+  transition:background-color .25s var(--ease),box-shadow .25s var(--ease);
+}
+.appbar.scrolled{background:var(--md-container);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.appbar-inner{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.title{font-size:1.375rem;line-height:1.75rem;font-weight:400;flex:1 1 auto}
+.title small{display:block;font-size:.875rem;line-height:1.25rem;letter-spacing:.016em;color:var(--md-on-surface-variant)}
+
+/* Search bar */
+.search{
+  position:relative;flex:1 1 100%;display:flex;align-items:center;height:56px;
+  border-radius:28px;background:var(--md-container);
+  transition:background-color .2s,box-shadow .2s;
+}
+.search:hover{background:var(--md-container-high)}
+.search:focus-within{background:var(--md-container-high);box-shadow:var(--md-e1)}
+.search svg{position:absolute;left:16px;width:24px;height:24px;fill:var(--md-on-surface-variant);pointer-events:none}
+.search input{
+  width:100%;height:100%;padding:0 20px 0 56px;border:0;outline:0;background:transparent;
+  color:var(--md-on-surface);font:inherit;letter-spacing:.031em;
+}
+.search input::placeholder{color:var(--md-on-surface-variant)}
+@media (min-width:720px){.title{flex:0 0 auto}.search{flex:1 1 auto;max-width:640px;margin-left:auto}}
+
+/* Grid: compact 2 / medium 3 / expanded fluid */
+main{
+  max-width:1280px;margin:0 auto;padding:8px 16px 64px;
+  display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));
+}
+@media (min-width:600px){main{gap:16px;padding:12px 24px 64px;grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:840px){main{gap:20px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
+
+/* Cards: M3 elevated card with extra-large shape */
+.card{
+  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;isolation:isolate;
+  border-radius:28px;background:var(--md-container);color:#fff;text-decoration:none;
+  box-shadow:var(--md-e1);
+  transition:box-shadow .3s var(--ease),transform .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.card img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;
+  transition:transform .5s var(--ease);
+}
+.card::after{ /* state layer */
+  content:"";position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.label{
+  position:absolute;left:0;right:0;bottom:0;padding:14px 20px;
+  background:var(--md-scrim);
+  font-size:1rem;line-height:1.5rem;font-weight:500;letter-spacing:.009em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+@media (hover:hover){
+  .card:hover{box-shadow:var(--md-e3);transform:translateY(-2px)}
+  .card:hover img{transform:scale(1.05)}
+  .card:hover::after{opacity:.08}
+}
+.card:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px}
+.card:focus-visible::after{opacity:.1}
+.card:active{transform:scale(.98)}
+.card[hidden]{display:none}
+
+/* Ripple */
+.ripple{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,.35);pointer-events:none;
+  transform:scale(0);animation:ripple .55s var(--ease) forwards;
+}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
+
+.empty{
+  display:none;grid-column:1/-1;padding:64px 16px;text-align:center;color:var(--md-on-surface-variant);
+}
+.empty.show{display:block}
+@media (prefers-reduced-motion:reduce){
+  .card,.card img,.appbar{transition:none}.ripple{display:none}
+}
+</style>
+</head>
+<body>
+<header class="appbar" id="appbar">
+  <div class="appbar-inner">
+    <h1 class="title">{{.Title}}</h1>
+    <label class="search">
+      <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+      <input id="q" type="search" placeholder="" aria-label="Search apps" autocomplete="off">
+    </label>
+  </div>
+</header>
+<main id="grid">
+{{range .Apps}}<a class="card" href="{{.URL}}" rel="noopener"><img src="{{.ImageURL}}" alt="" loading="lazy" onerror="this.remove()"><span class="label">{{.Name}}</span></a>
+{{end}}<p class="empty" id="empty">No applications match your search.</p>
+</main>
+<script>
+(function () {
+  var bar = document.getElementById("appbar");
+  var grid = document.getElementById("grid");
+  var empty = document.getElementById("empty");
+  var cards = Array.prototype.slice.call(grid.querySelectorAll(".card"));
+
+  function onScroll() { bar.classList.toggle("scrolled", window.scrollY > 4); }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  document.getElementById("q").addEventListener("input", function (e) {
+    var term = e.target.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (c) {
+      var ok = c.textContent.toLowerCase().indexOf(term) !== -1;
+      c.hidden = !ok;
+      if (ok) shown++;
+    });
+    empty.classList.toggle("show", shown === 0);
+  });
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    grid.addEventListener("pointerdown", function (e) {
+      var card = e.target.closest(".card");
+      if (!card) return;
+      var r = card.getBoundingClientRect();
+      var size = Math.max(r.width, r.height) * 2;
+      var s = document.createElement("span");
+      s.className = "ripple";
+      s.style.width = s.style.height = size + "px";
+      s.style.left = (e.clientX - r.left - size / 2) + "px";
+      s.style.top = (e.clientY - r.top - size / 2) + "px";
+      card.appendChild(s);
+      s.addEventListener("animationend", function () { s.remove(); });
+    });
+  }
+})();
+</script>
+</body>
+</html>
